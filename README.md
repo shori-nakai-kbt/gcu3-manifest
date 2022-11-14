@@ -6,6 +6,7 @@
     ```
 
 2. Obtain source code
+
     IMX Original
     ```
     $ repo init -u https://github.com/nxp-imx/imx-manifest -b imx-linux-kirkstone -m imx-5.15.52-2.1.0.xml
@@ -28,6 +29,7 @@
     ```
 
 3. Setup environment
+
     First time
     ```
     $ DISTRO=fsl-imx-xwayland MACHINE=imx8qmmek source imx-setup-release.sh -b build
