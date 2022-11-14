@@ -1,87 +1,65 @@
-i.MX Repo Manifest README
-=========================
+# How to build a yocto image
+1. Create work dir
+    ```
+    $ mkdir imx-yocto-bsp
+    $ cd imx-yocto-bsp
+    ```
 
-This repo is used to download manifests for i.MX BSP releases.
+2. Obtain source code
+    IMX Original
+    ```
+    $ repo init -u https://github.com/nxp-imx/imx-manifest -b imx-linux-kirkstone -m imx-5.15.52-2.1.0.xml
+    $ repo sync -c -j `nproc --all`
+    ```
 
-Specific instructions will reside in READMEs in each branch.
+    KBT Cutsom
+    ```
+    $ repo init --depth=1 -u http://172.29.128.8/gitlab/emb-sys-group/gcu3/imx-manifest.git -b imx-linux-kirkstone -m imx-5.15.52-2.1.0_kbt.xml
+    $ repo sync -c -j `nproc --all`
+    ```
+    `--depth=1`: Shallow clone
+    `-c`: Fetch only current branch
+    `-j`: Thread num
 
-The branch will be based on the release type Linux or Android with release manifests in each branch tied to the base releases.
+    <br>When the entire log is needed
+    ```
+    $ cd <some-git-repository>
+    $ git fetch <remote name> <branch name> --unshallow
+    ```
 
-For example for i.MX Linux Yocto Project releases the branches will be imx-linux-<Yocto Project release> so `imx-linux-kirkstone` with
-all manifests tied to releases on `Kirkstone` in this branch.
+3. Setup environment
+    First time
+    ```
+    $ DISTRO=fsl-imx-xwayland MACHINE=imx8qmmek source imx-setup-release.sh -b build
+    ```
+    *EULA acceptance required
 
-Install the `repo` utility:
----------------------------
+    <br>After the second time
+    ```
+    $ source setup-environment build
+    ```
 
-To use this manifest repo, the `repo` tool must be installed first.
+    The Yocto Project now allows to reuse Shared State from its autobuilder. If the network connection between our server and your machine is faster than you would build recipes, you can try to speed up your builds by using such Share State and Hash Equivalence by setting:
+    ```
+    BB_SIGNATURE_HANDLER = "OEEquivHash"
+    BB_HASHSERVE = "auto"
+    BB_HASHSERVE_UPSTREAM = "hashserv.yocto.io:8687"
+    SSTATE_MIRRORS ?= "file://.* https://sstate.yoctoproject.org/all/PATH;downloadfilename=PATH"
+    ```
 
-```
-$: mkdir ~/bin
-$: curl http://commondatastorage.googleapis.com/git-repo-downloads/repo  > ~/bin/repo
-$: chmod a+x ~/bin/repo
-$: PATH=${PATH}:~/bin
-```
 
-Download the Yocto Project BSP
-------------------------------
+4. Build
+    ```
+    $ bitbake <image name>
+    ```
 
-```
-$: mkdir <release>
-$: cd <release>
-$: repo init -u https://github.com/nxp-imx/imx-manifest -b <branch name> [ -m <release manifest>]
-$: repo sync
-```
-
-Each branch will have detailed READMEs describing exact syntax.
-
-Examples
---------
-
-To download the 5.15.52-2.1.0 release
-```
-$: repo init -u https://github.com/nxp-imx/imx-manifest -b imx-linux-kirkstone -m imx-5.15.52-2.1.0.xml
-```
-To download the 5.15.32-2.0.0 release
-```
-$: repo init -u https://github.com/nxp-imx/imx-manifest -b imx-linux-kirkstone -m imx-5.15.32-2.0.0.xml
-```
-
-Setup the build folder for a BSP release:
------------------------------------------
-
-Note: The remaining instructions are for setting up a BSP release only. For setting
-up a demo, please see `imx-manifest/README-<demo>` for further instructions.
-
-```
-$: [MACHINE=<machine>] [DISTRO=fsl-imx-<backend>] source ./imx-setup-release.sh -b bld-<backend>
-
-<machine>   defaults to `imx6qsabresd`
-<backend>   Graphics backend type
-    xwayland    Wayland with X11 support - default distro
-    wayland     Wayland
-    fb          Framebuffer (not supported for mx8)
-```
-
-Note if the poky community distro is used then build breaks will happen with some
-components using our `meta-imx` layer.
-
-Examples:
-- Setup for XWayland.
-```
-$: MACHINE=imx8mnevk DISTRO=fsl-imx-xwayland source ./imx-setup-release.sh -b bld-xwayland
-```
-
-Build an image:
----------------
-
-```
-$: bitbake <image recipe>
-```
-
-Some image recipes:
-
-Image Name           | Description
----------------------|---------------------------------------------------
-imx-image-core       | core image with basic graphics and no multimedia
-imx-image-multimedia | image with multimedia and graphics
-imx-image-full       | image with multimedia and machine learning and Qt
+    i.MX Yocto project images
+    | Image name | Target | Provided by layer |
+    | ---------- | ------ | ----------------- |
+    | core-image-minimal | A small image that only allows a device to boot. | poky |
+    | core-image-base | A console-only image that fully supports the target device hardware. | poky |
+    | core-image-sato | An image with Sato, a mobile environment and visual style for mobile devices. The image supports a Sato theme and uses Pimlico applications. It contains a terminal, an editor and a file manager. | poky |
+    | imx-image-core | An i.MX image with i.MX test applications to be used for Wayland backends. This image is used by our daily core testing. | meta-imx/meta-sdk |
+    | fsl-image-machine-test | An Fsl Community i.MX core image with console environment - no GUI interface. | meta-freescale-distro |
+    | imx-image-multimedia | Builds an i.MX image with a GUI without any Qt content. | meta-imx/meta-sdk |
+    | imx-image-full | Builds an opensource Qt 6 image with Machine Learning features. These images are only supported for i.MX SoC with hardware graphics. They are not supported on the i.MX 6UltraLite, i.MX 6UltraLiteLite, i. MX 6SLL, i.MX 7Dual, i.MX 8MNanoLite, or i.MX 8DXL | meta-imx/meta-sdk |
