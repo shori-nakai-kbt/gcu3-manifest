@@ -32,7 +32,7 @@
 
     First time
     ```
-    $ DISTRO=fsl-imx-xwayland MACHINE=imx8qmmek source imx-setup-release.sh -b build
+    $ DISTRO=fsl-imx-xwayland MACHINE=imx8qxpc0mek source imx-setup-release.sh -b build
     ```
     *EULA acceptance required
 
