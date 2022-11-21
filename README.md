@@ -65,3 +65,4 @@
     | fsl-image-machine-test | An Fsl Community i.MX core image with console environment - no GUI interface. | meta-freescale-distro |
     | imx-image-multimedia | Builds an i.MX image with a GUI without any Qt content. | meta-imx/meta-sdk |
     | imx-image-full | Builds an opensource Qt 6 image with Machine Learning features. These images are only supported for i.MX SoC with hardware graphics. They are not supported on the i.MX 6UltraLite, i.MX 6UltraLiteLite, i. MX 6SLL, i.MX 7Dual, i.MX 8MNanoLite, or i.MX 8DXL | meta-imx/meta-sdk |
+    | imx-image-full-dev | gcc and ssh connection available | meta-imx/meta-sdk |
