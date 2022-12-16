@@ -31,10 +31,15 @@
 3. Setup environment
 
     First time
+    ## i.MX8 QuadXPlus
     ```
     $ DISTRO=fsl-imx-xwayland MACHINE=imx8qxpc0mek source imx-setup-release.sh -b build
     ```
-    *EULA acceptance required
+    
+    ## i.MX8 QuadMax
+    ```
+    $ DISTRO=fsl-imx-xwayland MACHINE=imx8qmmek source imx-setup-release.sh -b build
+    ```
 
     <br>After the second time
     ```
